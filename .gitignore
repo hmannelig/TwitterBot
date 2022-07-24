@@ -1,0 +1,8 @@
+/venv/
+/app_bot.properties
+/scripts/resources/output/raw/lmohada.txt
+/scripts/resources/output/raw/yawylno.txt
+/scripts/resources/@Alm0hada_user_tweets.xlsx
+/scripts/resources/@yawylno_user_tweets.xlsx
+/scripts/resources/cleaned_dataset.txt
+/scripts/resources/dirty_dataset.txt
