@@ -7,3 +7,4 @@
 /resources/output/cleaned_dataset.txt
 /resources/output/dirty_dataset.txt
 .idea
+/language_model/cleaned_dataset.txt

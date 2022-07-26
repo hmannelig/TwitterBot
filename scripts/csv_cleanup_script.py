@@ -42,12 +42,12 @@ def clean_tweets(file):
     lines = []
 
     with open(file, encoding="utf8") as file_in:
-        for line in file_in:
-            stringList = re.split('(\d+)', line)
+        for text_line in file_in:
+            string_list = re.split('(\d+)', text_line)
 
-            if len(stringList) > 1:
+            if len(string_list) > 1:
                 sentence = ""
-                for s in stringList[2:]:
+                for s in string_list[2:]:
                     sentence += s
 
                 temp = remove_mentions(sentence)
@@ -55,8 +55,8 @@ def clean_tweets(file):
                 if not isRetweet(cleaned_string) and len(cleaned_string) > 1:
                     lines.append(remove_starting_punctuations(cleaned_string))
 
-            elif len(stringList) == 1:
-                lines[len(lines) - 1] += remove_mentions(stringList[0])
+            elif len(string_list) == 1:
+                lines[len(lines) - 1] += remove_mentions(string_list[0])
 
     return lines
 
