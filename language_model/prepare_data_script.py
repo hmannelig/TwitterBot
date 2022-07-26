@@ -1,22 +1,29 @@
-# Based on code from https://towardsdatascience.com/training-neural-networks-to-create-text-like-a-human-23bfdc23c28
-import random
+# Based on code from:
+# https://towardsdatascience.com/training-neural-networks-to-create-text-like-a-human-23bfdc23c28
+# https://www.thepythoncode.com/article/text-generation-keras-python
 
-import regex
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 import tensorflow.keras.utils as ku
-import numpy as np
-
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout, Bidirectional
-from tensorflow.keras.models import Sequential
-from tensorflow.keras import regularizers
 import tensorflow as tf
-
-import pandas as pd
+import numpy as np
 import re
 
+import random
+import regex
+import os
+
+from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout, Bidirectional
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import regularizers
+
+import pandas as pd
+
+FILE_PATH = "cleaned_dataset.txt"
+BASENAME = os.path.basename(FILE_PATH)
+
 data = []
-with open('C:\\Users\\p_ber\\Workspace\\TwitterBot\\scripts\\resources\\output\\cleaned_dataset.txt',
+with open(FILE_PATH,
           encoding='utf-8') as f:
     for l in f:
         data.append(l)
@@ -54,7 +61,12 @@ for line in corpus_cleaned:
 
 # pad sequences
 max_sequence_len = max([len(x) for x in input_sequences])
-input_sequences = np.array(pad_sequences(input_sequences, maxlen=max_sequence_len, padding='pre'))
+input_sequences = np.array(
+    pad_sequences(
+        input_sequences,
+        maxlen=max_sequence_len,
+        padding='pre'
+    ))
 
 # create predictors and label
 total_words = len(tokenizer.word_index) + 1
@@ -69,7 +81,13 @@ model.add(LSTM(100))
 model.add(Dense(total_words / 2, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
 model.add(Dense(total_words, activation='softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model_weights_path = f"results/{BASENAME}-{max_sequence_len}.h5"
+
+model.compile(
+    loss='categorical_crossentropy',
+    optimizer='adam',
+    metrics=['accuracy']
+)
 
 
 class myCallback(tf.keras.callbacks.Callback):
@@ -81,20 +99,25 @@ class myCallback(tf.keras.callbacks.Callback):
 
 callbacks = myCallback()
 
-history = model.fit(predictors, label, epochs=300, verbose=1, callbacks=[callbacks])
+if not os.path.isdir("results"):
+    os.mkdir("results")
+
+model.fit(predictors, label, epochs=300, verbose=1, callbacks=[callbacks])
+
+# saving model after training
+model.save(model_weights_path)
 
 next_words = 10
 
-# seed_text_one = "i think"
-# seed_text_two = "this was"
-# seed_text_three = "this cd"
-# seed_text_four = "i love"
-# seed_text_five = "what a"
-random_item = random.choice(data)
-print(random_item)
+# TODO: create a custom function to pick two words as starting text seed for the text generation.
+# random_item = random.choice(data)
+# print(random_item)
+#
+# seed_text = ""
 
-# seed_text =
 
+# TODO: use this to create a function that takes the random seed texts and then produces
+#  the generated text using the language model
 # for _ in range(next_words):
 #     token_list = tokenizer.texts_to_sequences([seed_text])[0]
 #     token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
@@ -105,6 +128,6 @@ print(random_item)
 #             output_word = word
 #             break
 #     seed_text += " " + output_word
-#
+
 # seed_text = (seed_text + ".").capitalize()
 # print(seed_text)

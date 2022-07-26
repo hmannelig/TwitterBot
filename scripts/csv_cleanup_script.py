@@ -66,7 +66,8 @@ secondList = clean_tweets(fileTwo)
 
 joined_list = firstList + secondList
 
-with open('resources/dirty_dataset.txt', 'w', encoding="utf-8") as f:
+with open('../resources/output/dirty_dataset.txt', 'w', encoding="utf-8") as f:
     for line in joined_list:
         if not line.isspace():
             f.write(line)
+
